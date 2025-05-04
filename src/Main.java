@@ -1,3 +1,6 @@
+import manager.TaskManager;
+import model.*;
+
 import java.util.Scanner;
 
 public class Main {
@@ -17,51 +20,51 @@ public class Main {
         EpicTask epicTask1 = new EpicTask("Test epic 1", "Description of test epic 1",
                                         TaskType.EPIC);
         taskManager.createEpicTask(epicTask1);
-        Subtask subtask1 = new Subtask("Test subtask 1","Description of test subtask 1",
-                                        TaskType.SUBTASK, epicTask1);
-        taskManager.createSubtask(subtask1);
-        Subtask subtask2 = new Subtask("Test subtask 2","Description of test subtask 2",
-                TaskType.SUBTASK, epicTask1);
-        taskManager.createSubtask(subtask2);
+        SubTask subTask1 = new SubTask("Test subtask 1","Description of test subtask 1",
+                                        TaskType.SUBTASK, epicTask1.getId());
+        taskManager.createSubTask(subTask1);
+        SubTask subTask2 = new SubTask("Test subtask 2","Description of test subtask 2",
+                TaskType.SUBTASK, epicTask1.getId());
+        taskManager.createSubTask(subTask2);
 
         EpicTask epicTask2 = new EpicTask("Test epic 2", "Description of test epic 2",
                 TaskType.EPIC);
         taskManager.createEpicTask(epicTask2);
-        Subtask subtask3 = new Subtask("Test subtask 3","Description of test subtask 3",
-                TaskType.SUBTASK, epicTask2);
-        taskManager.createSubtask(subtask3);
+        SubTask subTask3 = new SubTask("Test subtask 3","Description of test subtask 3",
+                TaskType.SUBTASK, epicTask2.getId());
+        taskManager.createSubTask(subTask3);
 
-        System.out.println("\n");
+        System.out.println();
         System.out.println(taskManager.getTaskList() + "\n");
         System.out.println(taskManager.getEpicTaskList() + "\n");
-        System.out.println(taskManager.getSubtaskList() + "\n");
+        System.out.println(taskManager.getSubTaskList() + "\n");
 
         task1.changeTaskStatus(TaskStatus.IN_PROGRESS);
         task2.changeTaskStatus(TaskStatus.DONE);
 
         epicTask1.changeTaskStatus(TaskStatus.DONE);
-        subtask1.changeTaskStatus(TaskStatus.DONE);
-        subtask2.changeTaskStatus(TaskStatus.IN_PROGRESS);
+        subTask1.changeTaskStatus(TaskStatus.DONE, taskManager);
+        subTask2.changeTaskStatus(TaskStatus.IN_PROGRESS, taskManager);
 
-        subtask3.changeTaskStatus(TaskStatus.DONE);
+        subTask3.changeTaskStatus(TaskStatus.DONE, taskManager);
 
         System.out.println(task1.getSimpleDescription());
         System.out.println(task2.getSimpleDescription() + "\n");
 
         System.out.println(epicTask1.getSimpleDescription());
-        System.out.println(subtask1.getSimpleDescription());
-        System.out.println(subtask2.getSimpleDescription() + "\n");
+        System.out.println(subTask1.getSimpleDescription());
+        System.out.println(subTask2.getSimpleDescription() + "\n");
 
         System.out.println(epicTask2.getSimpleDescription());
-        System.out.println(subtask3.getSimpleDescription() + "\n");
+        System.out.println(subTask3.getSimpleDescription() + "\n");
 
-        taskManager.removeTaskByUUID(1);
-        taskManager.removeSubtasksByUUID(4);
-        taskManager.removeEpicTaskByUUID(5);
+        taskManager.removeTaskByID(1);
+        taskManager.removeSubTasksByID(4);
+        taskManager.removeEpicTaskByID(5);
 
         System.out.println(taskManager.getTaskList() + "\n");
         System.out.println(taskManager.getEpicTaskList() + "\n");
-        System.out.println(taskManager.getSubtaskList() + "\n");
+        System.out.println(taskManager.getSubTaskList() + "\n");
 
 
         /*
@@ -119,13 +122,13 @@ public class Main {
                         taskName = scanner.nextLine();
                         System.out.println("Введите описание задачи");
                         taskDescription = scanner.nextLine();
-                        System.out.println("Введите uuid эпика");
-                        int taskUUID = scanner.nextInt();
-                        EpicTask epicTask = taskManager.getEpicTask(taskUUID);
+                        System.out.println("Введите id эпика");
+                        int taskID = scanner.nextInt();
+                        EpicTask epicTask = taskManager.getEpicTask(taskID);
                         if (epicTask != null) {
-                            taskManager.createSubtask(taskName, taskDescription, epicTask);
+                            taskManager.createSubTask(taskName, taskDescription, epicTask.getId());
                         } else {
-                            System.out.println("Не удалось найти эпик по указанному uuid");
+                            System.out.println("Не удалось найти эпик по указанному id");
                         }
                     } else {
                         System.out.println("Отсутствуют эпики. Создайте сначала эпик");
@@ -134,8 +137,8 @@ public class Main {
 
             } else if (command == 2) {
 
-                System.out.println("Введите uuid задачи");
-                int taskUUID = scanner.nextInt();
+                System.out.println("Введите id задачи");
+                int taskID = scanner.nextInt();
 
                 System.out.println("Укажите новый статус задачи: 1 - New; 2 - In progress; 3 - Done");
                 command = scanner.nextInt();
@@ -153,17 +156,17 @@ public class Main {
                     continue;
                 }
 
-                if (taskManager.isEpicContainsUUID(taskUUID)) {
-                    EpicTask task = taskManager.getEpicTask(taskUUID);
+                if (taskManager.isEpicContainsID(taskID)) {
+                    EpicTask task = taskManager.getEpicTask(taskID);
                     task.changeTaskStatus(newStatus);
-                } else if (taskManager.isTaskContainsUUID(taskUUID)) {
-                    Task task = taskManager.getTask(taskUUID);
+                } else if (taskManager.isTaskContainsID(taskID)) {
+                    Task task = taskManager.getTask(taskID);
                     task.changeTaskStatus(newStatus);
-                } else if (taskManager.isSubtaskContainsUUID(taskUUID)) {
-                    Subtask task = taskManager.getSubtask(taskUUID);
-                    task.changeTaskStatus(newStatus);
+                } else if (taskManager.isSubTaskContainsID(taskID)) {
+                    SubTask task = taskManager.getSubTask(taskID);
+                    task.changeTaskStatus(newStatus, taskManager);
                 } else {
-                    System.out.println("Задача с указанным uuid не найдена");
+                    System.out.println("Задача с указанным id не найдена");
                 }
 
             } else if (command == 3) {
