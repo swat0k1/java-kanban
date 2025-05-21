@@ -1,12 +1,13 @@
 package model;
 
+import interfaces.TaskManager;
 import manager.*;
 import java.util.ArrayList;
 import java.util.Objects;
 
 public class EpicTask extends Task{
 
-    private final ArrayList<Integer> subTasksID;
+    private ArrayList<Integer> subTasksID;
 
     public EpicTask(String taskName, String taskDescription, TaskType taskType) {
         super(taskName, taskDescription, taskType);
@@ -14,6 +15,10 @@ public class EpicTask extends Task{
     }
 
     public void addSubTask(Integer subtask) {
+        if (subtask.equals(this.getId())) {
+            System.out.println("Эпик нельзя добавить в самого себя в виде задачи!");
+            return;
+        }
         subTasksID.add(subtask);
     }
 
@@ -38,17 +43,17 @@ public class EpicTask extends Task{
         super.changeTaskStatus(taskStatus);
     }
 
-    public void updateEpicTaskStatus(TaskManager taskManager) {
+    public void updateEpicTaskStatus(TaskManager inMemoryTaskManager) {
         boolean subTaskDone = false;
         boolean subTaskInProgress = false;
         boolean subTaskNew = false;
 
         for (Integer subTask : subTasksID) {
-            if (taskManager.getSubTask(subTask).getStatus().equals(TaskStatus.DONE)) {
+            if (inMemoryTaskManager.getTask(subTask).getStatus().equals(TaskStatus.DONE)) {
                 subTaskDone = true;
-            } else if (taskManager.getSubTask(subTask).getStatus().equals(TaskStatus.IN_PROGRESS)) {
+            } else if (inMemoryTaskManager.getTask(subTask).getStatus().equals(TaskStatus.IN_PROGRESS)) {
                 subTaskInProgress = true;
-            } else if (taskManager.getSubTask(subTask).getStatus().equals(TaskStatus.NEW)) {
+            } else if (inMemoryTaskManager.getTask(subTask).getStatus().equals(TaskStatus.NEW)) {
                 subTaskNew = true;
             }
         }

@@ -1,6 +1,6 @@
 package model;
 
-import manager.*;
+import interfaces.TaskManager;
 import java.util.Objects;
 
 public class SubTask extends Task {
@@ -9,17 +9,29 @@ public class SubTask extends Task {
 
     public SubTask(String taskName, String taskDescription, TaskType taskType, int epicTask) {
         super(taskName, taskDescription, taskType);
-        this.epicTaskID = epicTask;
+        if (epicTask != this.getId()) {
+            this.epicTaskID = epicTask;
+        } else {
+            System.out.println("Сабтаску нельзя сделать своим же эпиком!");
+            this.epicTaskID = -1;
+        }
+
     }
 
-    public EpicTask getEpicTask(TaskManager taskManager) {
-        EpicTask epicTask = taskManager.getEpicTask(epicTaskID);
-        return epicTask;
+    public EpicTask getEpicTask(TaskManager inMemoryTaskManager) {
+        if (inMemoryTaskManager.isEpicContainsID(epicTaskID)) {
+            return (EpicTask) inMemoryTaskManager.getEpicTaskHashMap().get(epicTaskID);
+        }
+        return null;
     }
 
-    public void changeTaskStatus(TaskStatus taskStatus, TaskManager taskManager) {
+    public int getEpicTaskID() {
+        return epicTaskID;
+    }
+
+    public void changeTaskStatus(TaskStatus taskStatus, TaskManager inMemoryTaskManager) {
             super.changeTaskStatus(taskStatus);
-            getEpicTask(taskManager).updateEpicTaskStatus(taskManager);
+            getEpicTask(inMemoryTaskManager).updateEpicTaskStatus(inMemoryTaskManager);
     }
 
     @Override

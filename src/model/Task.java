@@ -11,21 +11,21 @@ public class Task {
     private TaskStatus status;
 
     public Task(String taskName, String taskDescription) {
-        this.id = TaskManager.getIDCounter();
+        this.id = InMemoryTaskManager.getIDCounter();
         this.name = taskName;
         this.description = taskDescription;
         this.type = TaskType.TASK;
         this.status = TaskStatus.NEW;
-        TaskManager.incrementIDCounter();
+        InMemoryTaskManager.incrementIDCounter();
     }
 
     public Task(String taskName, String taskDescription, TaskType type) {
-        this.id = TaskManager.getIDCounter();
+        this.id = InMemoryTaskManager.getIDCounter();
         this.name = taskName;
         this.description = taskDescription;
         this.type = type;
         this.status = TaskStatus.NEW;
-        TaskManager.incrementIDCounter();
+        InMemoryTaskManager.incrementIDCounter();
     }
 
     public String getName() {
