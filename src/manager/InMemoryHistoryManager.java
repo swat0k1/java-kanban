@@ -86,8 +86,7 @@ class DoubleLinkedList {
         }
         if (node.equals(head)) {
             head = null;
-        }
-        else if (node.equals(tail)) {
+        } else if (node.equals(tail)) {
             tail = tail.getPrev();
         }
     }
