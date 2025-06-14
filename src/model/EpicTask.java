@@ -5,7 +5,7 @@ import manager.*;
 import java.util.ArrayList;
 import java.util.Objects;
 
-public class EpicTask extends Task{
+public class EpicTask extends Task {
 
     private ArrayList<Integer> subTasksID;
 
