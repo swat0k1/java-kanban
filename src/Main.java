@@ -10,6 +10,64 @@ public class Main {
 
         TaskManager inMemoryTaskManager = managers.getDefault();
 
+        Task simpleTask1 = new Task("Simple task 1", "");
+        Task simpleTask2 = new Task("Simple task 2", "");
+
+        Task epicTask1 = new EpicTask("Epic task 1", "", TaskType.EPIC);
+        Task subTask1 = new SubTask("Subtask 1","", TaskType.SUBTASK, epicTask1.getId());
+        Task subTask2 = new SubTask("Subtask 2","", TaskType.SUBTASK, epicTask1.getId());
+        Task subTask3 = new SubTask("Subtask 3","", TaskType.SUBTASK, epicTask1.getId());
+
+        Task epicTask2 = new EpicTask("Epic task 2", "", TaskType.EPIC);
+
+        inMemoryTaskManager.createTask(simpleTask1);
+        inMemoryTaskManager.createTask(simpleTask2);
+        inMemoryTaskManager.createTask(epicTask1);
+        inMemoryTaskManager.createTask(subTask1);
+        inMemoryTaskManager.createTask(subTask2);
+        inMemoryTaskManager.createTask(subTask3);
+        inMemoryTaskManager.createTask(epicTask2);
+
+        System.out.println("====================================================================================");
+        inMemoryTaskManager.getTask(simpleTask2.getId());
+        inMemoryTaskManager.getTask(simpleTask2.getId());
+        System.out.println(inMemoryTaskManager.getHistory());
+        System.out.println();
+        inMemoryTaskManager.getTask(simpleTask1.getId());
+        System.out.println(inMemoryTaskManager.getHistory());
+        System.out.println();
+        inMemoryTaskManager.getTask(epicTask2.getId());
+        inMemoryTaskManager.getTask(epicTask2.getId());
+        System.out.println(inMemoryTaskManager.getHistory());
+        System.out.println();
+        inMemoryTaskManager.getTask(subTask3.getId());
+        System.out.println(inMemoryTaskManager.getHistory());
+        System.out.println();
+        inMemoryTaskManager.getTask(subTask2.getId());
+        System.out.println(inMemoryTaskManager.getHistory());
+        System.out.println();
+        inMemoryTaskManager.getTask(subTask1.getId());
+        System.out.println(inMemoryTaskManager.getHistory());
+        System.out.println();
+        inMemoryTaskManager.getTask(epicTask1.getId());
+        inMemoryTaskManager.getTask(epicTask1.getId());
+        System.out.println(inMemoryTaskManager.getHistory());
+        System.out.println("====================================================================================");
+        System.out.println();
+
+        System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+        inMemoryTaskManager.removeTask(simpleTask2.getId());
+        System.out.println(inMemoryTaskManager.getHistory());
+        System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+        System.out.println();
+
+        System.out.println("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
+        inMemoryTaskManager.removeTask(epicTask1.getId());
+        System.out.println(inMemoryTaskManager.getHistory());
+        System.out.println("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
+        System.out.println();
+
+        /*
         Task task1 = new Task("Test task 1", "Description of test task 1");
         inMemoryTaskManager.createTask(task1);
         Task task2 = new Task("Test task 2", "Description of test task 2");
@@ -82,6 +140,7 @@ public class Main {
         System.out.println(inMemoryTaskManager.getTaskList(TaskType.TASK) + "\n");
         System.out.println(inMemoryTaskManager.getTaskList(TaskType.EPIC) + "\n");
         System.out.println(inMemoryTaskManager.getTaskList(TaskType.SUBTASK) + "\n");
+         */
 
     }
 }

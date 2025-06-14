@@ -66,4 +66,13 @@ public class InMemoryTaskManagerTest {
         Assertions.assertEquals(epicTask, taskManager.getTask(taskid));
     }
 
+
+    @Test
+    public void EpicTaskShouldntHaveDeletedSubtaskID() {
+        Assertions.assertEquals(true, epicTask.getSubTasks().contains(subTask.getId()));
+        taskManager.removeTask(subTask.getId());
+        Assertions.assertEquals(false, epicTask.getSubTasks().contains(subTask.getId()));
+        taskManager.createTask(subTask);
+    }
+
 }
