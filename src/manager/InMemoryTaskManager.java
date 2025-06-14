@@ -84,7 +84,7 @@ public class InMemoryTaskManager<T extends Task> implements TaskManager<T> {
             T task = (T) epicTasks.get(id);
                 inMemoryHistoryManager.add(task);
             return task;
-        }else if (isSubTaskContainsID(id)) {
+        } else if (isSubTaskContainsID(id)) {
             T task = (T) subTasks.get(id);
                 inMemoryHistoryManager.add(task);
             return task;
@@ -103,7 +103,7 @@ public class InMemoryTaskManager<T extends Task> implements TaskManager<T> {
         } else if (isEpicContainsID(id)) {
             T task = (T) epicTasks.get(id);
             return task;
-        }else if (isSubTaskContainsID(id)) {
+        } else if (isSubTaskContainsID(id)) {
             T task = (T) subTasks.get(id);
             return task;
         }
