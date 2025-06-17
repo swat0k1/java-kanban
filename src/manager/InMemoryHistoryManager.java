@@ -10,8 +10,8 @@ import java.util.NoSuchElementException;
 
 public class InMemoryHistoryManager implements HistoryManager {
 
-    HashMap<Integer, Node> nodeMap = new HashMap<>();
-    DoubleLinkedList nodeList = new DoubleLinkedList();
+    private HashMap<Integer, Node> nodeMap = new HashMap<>();
+    private DoubleLinkedList nodeList = new DoubleLinkedList();
 
     @Override
     public ArrayList<Task> getHistory() {
@@ -44,6 +44,14 @@ public class InMemoryHistoryManager implements HistoryManager {
         Node curr = nodeMap.get(taskId);
         nodeMap.remove(taskId);
         nodeList.removeNode(curr);
+    }
+
+    public DoubleLinkedList getNodeList() {
+        return nodeList;
+    }
+
+    public HashMap<Integer, Node> getNodeMap() {
+        return nodeMap;
     }
 
 }

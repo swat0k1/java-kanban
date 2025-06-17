@@ -7,26 +7,28 @@ import model.SubTask;
 import model.Task;
 import model.TaskType;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class TaskTest {
 
-    public static Managers managers;
-    public static TaskManager taskManager;
-    public static Task task;
-    public static SubTask subTask;
-    public static EpicTask epicTask;
+    private Managers managers;
+    private TaskManager taskManager;
+    private Task task;
+    private SubTask subTask;
+    private EpicTask epicTask;
 
-    @BeforeAll
-    public static void BeforeAll() {
+    @BeforeEach
+    public void BeforeEach() {
         managers = new Managers();
         taskManager = managers.getDefault();
         task = new Task("Test task", "Test task description");
         taskManager.createTask(task);
+
         epicTask = new EpicTask("Test epicTask", "Test epicTask description", TaskType.EPIC);
         taskManager.createTask(epicTask);
-        subTask = new SubTask("Test subTask", "Test subTask description",TaskType.SUBTASK, epicTask.getId());
+
+        subTask = new SubTask("Test subTask", "Test subTask description", TaskType.SUBTASK, epicTask.getId());
         taskManager.createTask(subTask);
     }
 

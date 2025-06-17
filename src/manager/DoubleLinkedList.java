@@ -5,17 +5,17 @@ import model.Task;
 
 import java.util.ArrayList;
 
-class DoubleLinkedList {
+public class DoubleLinkedList {
+
+    private Node head;
+    private Node tail;
+    private int size;
 
     DoubleLinkedList() {
         this.head = null;
         this.tail = null;
         this.size = 0;
     }
-
-    private Node head;
-    private Node tail;
-    private int size;
 
     public void linkLast(Node newNode) {
         if (head == null) {

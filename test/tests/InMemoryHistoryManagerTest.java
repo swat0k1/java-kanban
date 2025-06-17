@@ -7,17 +7,18 @@ import model.Task;
 import model.TaskType;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 
 public class InMemoryHistoryManagerTest {
 
-    public static Managers managers;
-    public static TaskManager taskManager;
+    private Managers managers;
+    private TaskManager taskManager;
 
-    @BeforeAll
-    public static void BeforeAll() {
+    @BeforeEach
+    public void BeforeEach() {
         managers = new Managers();
         taskManager = managers.getDefault();
 
