@@ -24,6 +24,9 @@ public class InMemoryTaskManager<T extends Task> implements TaskManager<T> {
         idCounter++;
     }
 
+    public static void setIDCounter(int id) {
+        InMemoryTaskManager.idCounter = id;
+    }
 
     @Override
     public void createTask(T task) {

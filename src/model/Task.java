@@ -28,6 +28,15 @@ public class Task {
         InMemoryTaskManager.incrementIDCounter();
     }
 
+    // Конструктор для создания таски при загрузке из файла
+    public Task(int id, String taskName, String taskDescription, TaskType type, TaskStatus status) {
+        this.id = id;
+        this.name = taskName;
+        this.description = taskDescription;
+        this.type = type;
+        this.status = status;
+    }
+
     public String getName() {
         return name;
     }
@@ -77,6 +86,12 @@ public class Task {
         result += "ID " + this.id;
 
         return result;
+    }
+
+    public String getStringValueOfTask() {
+        //id,type,name,status,description
+        return String.format("%d,%s,%s,%s,%s",
+                                this.id, this.type.toString(), this.name, this.status.toString(), this.description);
     }
 
     @Override

@@ -3,6 +3,8 @@ package manager;
 import interfaces.TaskManager;
 import interfaces.HistoryManager;
 
+import java.io.File;
+
 public class Managers {
 
     public static HistoryManager getDefaultHistory() {
@@ -11,6 +13,10 @@ public class Managers {
 
     public TaskManager getDefault() {
         return new InMemoryTaskManager();
+    }
+
+    public FileBackedTaskManager getBacked(File file) {
+        return new FileBackedTaskManager(file);
     }
 
 }

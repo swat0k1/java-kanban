@@ -1,8 +1,8 @@
 package model;
 
 import interfaces.TaskManager;
-import manager.*;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Objects;
 
 public class EpicTask extends Task {
@@ -14,12 +14,21 @@ public class EpicTask extends Task {
         this.subTasksID = new ArrayList<>();
     }
 
+    // Конструктор для создания таски при загрузке из файла
+    public EpicTask(int id, String taskName, String taskDescription, TaskType taskType, TaskStatus status) {
+        super(id, taskName, taskDescription, taskType, status);
+        this.subTasksID = new ArrayList<>();
+    }
+
     public void addSubTask(Integer subtask) {
         if (subtask.equals(this.getId())) {
             System.out.println("Эпик нельзя добавить в самого себя в виде задачи!");
             return;
         }
-        subTasksID.add(subtask);
+
+        if (!subTasksID.contains(subtask)) {
+            subTasksID.add(subtask);
+        }
     }
 
     public void removeSubTask(Integer subtask) {
@@ -32,15 +41,6 @@ public class EpicTask extends Task {
 
     public void clearSubTasksList() {
         subTasksID.clear();
-    }
-
-    @Override
-    public void changeTaskStatus(TaskStatus taskStatus) {
-        System.out.println("Менять статус эпика в ручную нельзя");
-    }
-
-    private void updateEpicTaskStatus(TaskStatus taskStatus) {
-        super.changeTaskStatus(taskStatus);
     }
 
     public void updateEpicTaskStatus(TaskManager inMemoryTaskManager) {
@@ -67,6 +67,28 @@ public class EpicTask extends Task {
         } else {
             this.updateEpicTaskStatus(TaskStatus.IN_PROGRESS);
         }
+    }
+
+    @Override
+    public String getStringValueOfTask() {
+        ArrayList<Integer> subTasks = getSubTasks();
+        StringBuilder subTasksString = new StringBuilder();
+        Collections.sort(subTasks);
+        for (Integer subTaskID : subTasks) {
+            subTasksString.append(",").append(subTaskID);
+        }
+        //id,type,name,status,description,subTasksIDs...
+        return String.format("%d,%s,%s,%s,%s%s",
+                getId(), getType().toString(), getName(), getStatus().toString(), getDescription(), subTasksString);
+    }
+
+    @Override
+    public void changeTaskStatus(TaskStatus taskStatus) {
+        System.out.println("Менять статус эпика в ручную нельзя");
+    }
+
+    private void updateEpicTaskStatus(TaskStatus taskStatus) {
+        super.changeTaskStatus(taskStatus);
     }
 
     @Override
