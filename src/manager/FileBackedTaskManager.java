@@ -9,14 +9,14 @@ import java.io.*;
 public class FileBackedTaskManager extends InMemoryTaskManager {
 
     private final File file;
-    private final String HEADER = "id,type,name,status,description,epic";
-    private final int HEADERIDINDEX = 0;
-    private final int HEADERTYPEINDEX = 1;
-    private final int HEADERNAMEINDEX = 2;
-    private final int HEADERSTATUSINDEX = 3;
-    private final int HEADERDESCRIPTIONINDEX = 4;
-    private final int HEADEREPICTASKIDINDEX = 5;
-    private final int HEADERSUBTASKSTARTIDINDEX = 6;
+    private final String header = "id,type,name,status,description,epic";
+    private final int headerIdIndex = 0;
+    private final int headerTypeIndex = 1;
+    private final int headerNameIndex = 2;
+    private final int headerStatusIndex = 3;
+    private final int headerDescriptionIndex = 4;
+    private final int headerEpicTaskIdIndex = 5;
+    private final int headerSubtaskStartIDIndex = 6;
 
     public FileBackedTaskManager(File file) {
         this.file = file;
@@ -49,7 +49,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
     public void save() {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
-            writer.write(HEADER);
+            writer.write(header);
             writer.newLine();
 
             // Таска
@@ -77,15 +77,15 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
     private Task taskFromString(String stringValueOfTask) {
         String[] values = stringValueOfTask.split(",");
-        int id = Integer.parseInt(values[HEADERIDINDEX]);
-        TaskType type = TaskType.valueOf(values[HEADERTYPEINDEX]);
-        String name = values[HEADERNAMEINDEX];
-        TaskStatus status = TaskStatus.valueOf(values[HEADERSTATUSINDEX]);
-        String description = values[HEADERDESCRIPTIONINDEX];
+        int id = Integer.parseInt(values[headerIdIndex]);
+        TaskType type = TaskType.valueOf(values[headerTypeIndex]);
+        String name = values[headerNameIndex];
+        TaskStatus status = TaskStatus.valueOf(values[headerStatusIndex]);
+        String description = values[headerDescriptionIndex];
 
         return switch (type) {
             case TASK -> createTask(id, name, description, status);
-            case SUBTASK -> createSubTask(id, name, description, status, Integer.parseInt(values[HEADEREPICTASKIDINDEX]));
+            case SUBTASK -> createSubTask(id, name, description, status, Integer.parseInt(values[headerEpicTaskIdIndex]));
             case EPIC -> createEpicTask(id, name, description, status, values);
         };
     }
@@ -100,7 +100,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
     private EpicTask createEpicTask(int id, String name, String description, TaskStatus status, String[] values) {
         EpicTask epicTask = new EpicTask(id, name, description, TaskType.EPIC, status);
-        for (int i = HEADERSUBTASKSTARTIDINDEX; i < values.length; i++) {
+        for (int i = headerSubtaskStartIDIndex; i < values.length; i++) {
             epicTask.addSubTask(Integer.parseInt(values[i]));
         }
         return epicTask;
