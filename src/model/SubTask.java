@@ -39,11 +39,6 @@ public class SubTask extends Task {
         return epicTaskID;
     }
 
-    public void changeTaskStatus(TaskStatus taskStatus, TaskManager inMemoryTaskManager) {
-            super.changeTaskStatus(taskStatus);
-            getEpicTask(inMemoryTaskManager).updateEpicTaskStatus(inMemoryTaskManager);
-    }
-
     @Override
     public String getStringValueOfTask() {
         //id,type,name,status,description,epicID

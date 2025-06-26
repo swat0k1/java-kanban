@@ -209,32 +209,6 @@ public class InMemoryTaskManager<T extends Task> implements TaskManager<T> {
         }
     }
 
-    // Выводит описание всех тасков
-    public void printTasksNames() {
-        for (Task task : tasks.values()) {
-            System.out.println(task.getSimpleDescription());
-        }
-        for (EpicTask task : epicTasks.values()) {
-            System.out.println(task.getSimpleDescription());
-        }
-        for (SubTask task : subTasks.values()) {
-            System.out.println(task.getSimpleDescription());
-        }
-    }
-
-    public ArrayList<Integer> getEpicsSubtasksList(EpicTask epicTask) {
-        return epicTask.getSubTasks();
-    }
-
-    public ArrayList<Integer> getEpicsSubtasksList(int id) {
-        if (!isEpicContainsID(id)) {
-            System.out.println("Эпик с указанным id не был найден");
-            return new ArrayList<>();
-        }
-        EpicTask epicTask = epicTasks.get(id);
-        return epicTask.getSubTasks();
-    }
-
     public boolean isTaskContainsID(int id) {
         return tasks.containsKey(id);
     }
@@ -251,12 +225,4 @@ public class InMemoryTaskManager<T extends Task> implements TaskManager<T> {
         return epicTasks;
     }
 
-    public int getSubTasksSize() {
-        return subTasks.size();
-    }
-
-    // Проверяет есть ли эпики
-    public boolean isEpicTaskAvailable() {
-        return !epicTasks.isEmpty();
-    }
 }

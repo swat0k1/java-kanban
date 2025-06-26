@@ -46,13 +46,5 @@ public class InMemoryHistoryManager implements HistoryManager {
         nodeList.removeNode(curr);
     }
 
-    public DoubleLinkedList getNodeList() {
-        return nodeList;
-    }
-
-    public HashMap<Integer, Node> getNodeMap() {
-        return nodeMap;
-    }
-
 }
 
