@@ -24,6 +24,9 @@ public class InMemoryTaskManager<T extends Task> implements TaskManager<T> {
         idCounter++;
     }
 
+    public static void setIDCounter(int id) {
+        InMemoryTaskManager.idCounter = id;
+    }
 
     @Override
     public void createTask(T task) {
@@ -33,7 +36,7 @@ public class InMemoryTaskManager<T extends Task> implements TaskManager<T> {
             System.out.println("Создан эпик. id: " + task.getId());
         } else if (task.getType().equals(TaskType.SUBTASK)) {
             SubTask subTask = (SubTask) task;
-            EpicTask epicTask = (EpicTask) getTask(subTask.getEpicTask(this).getId());
+            EpicTask epicTask = (EpicTask) getTaskWithoutRecord(subTask.getEpicTask(this).getId());
             epicTask.addSubTask(task.getId());
             subTasks.put(task.getId(), (SubTask) task);
             System.out.println("Создана сабтаска. id: " + task.getId());
@@ -78,15 +81,33 @@ public class InMemoryTaskManager<T extends Task> implements TaskManager<T> {
 
         if (isTaskContainsID(id)) {
             T task = (T) tasks.get(id);
-            inMemoryHistoryManager.addHistory(task);
+                inMemoryHistoryManager.add(task);
             return task;
         } else if (isEpicContainsID(id)) {
             T task = (T) epicTasks.get(id);
-            inMemoryHistoryManager.addHistory(task);
+                inMemoryHistoryManager.add(task);
             return task;
-        }else if (isSubTaskContainsID(id)) {
+        } else if (isSubTaskContainsID(id)) {
             T task = (T) subTasks.get(id);
-            inMemoryHistoryManager.addHistory(task);
+                inMemoryHistoryManager.add(task);
+            return task;
+        }
+
+        System.out.println("Ошибка! Таска с указанным id не найдена!");
+        return null;
+
+    }
+
+    public T getTaskWithoutRecord(int id) {
+
+        if (isTaskContainsID(id)) {
+            T task = (T) tasks.get(id);
+            return task;
+        } else if (isEpicContainsID(id)) {
+            T task = (T) epicTasks.get(id);
+            return task;
+        } else if (isSubTaskContainsID(id)) {
+            T task = (T) subTasks.get(id);
             return task;
         }
 
@@ -121,7 +142,7 @@ public class InMemoryTaskManager<T extends Task> implements TaskManager<T> {
 
         if (isTaskContainsID(id)) {
             T task = (T) tasks.get(id);
-            inMemoryHistoryManager.removeHistory(task);
+            inMemoryHistoryManager.remove(task.getId());
             tasks.remove(id);
 
         } else if (isEpicContainsID(id)) {
@@ -129,14 +150,14 @@ public class InMemoryTaskManager<T extends Task> implements TaskManager<T> {
             ArrayList<Integer> subTaskArrayList = epicTask.getSubTasks();
             for (Integer subTaskID : subTaskArrayList) {
                 if (isSubTaskContainsID(subTaskID)) {
-                    T task = (T) subTasks.get(id);
-                    inMemoryHistoryManager.removeHistory(task);
+                    T task = (T) subTasks.get(subTaskID);
+                    inMemoryHistoryManager.remove(task.getId());
                     subTasks.remove(subTaskID);
                 }
             }
             epicTask.clearSubTasksList();
             T task = (T) epicTasks.get(id);
-            inMemoryHistoryManager.removeHistory(task);
+            inMemoryHistoryManager.remove(task.getId());
             epicTasks.remove(epicTask.getId());
 
         } else if (isSubTaskContainsID(id)) {
@@ -145,7 +166,7 @@ public class InMemoryTaskManager<T extends Task> implements TaskManager<T> {
 
             epicTask.removeSubTask(subTask.getId());
             T task = (T) subTasks.get(id);
-            inMemoryHistoryManager.removeHistory(task);
+            inMemoryHistoryManager.remove(task.getId());
             subTasks.remove(subTask.getId());
             epicTask.updateEpicTaskStatus(this);
 
@@ -188,32 +209,6 @@ public class InMemoryTaskManager<T extends Task> implements TaskManager<T> {
         }
     }
 
-    // Выводит описание всех тасков
-    public void printTasksNames() {
-        for (Task task : tasks.values()) {
-            System.out.println(task.getSimpleDescription());
-        }
-        for (EpicTask task : epicTasks.values()) {
-            System.out.println(task.getSimpleDescription());
-        }
-        for (SubTask task : subTasks.values()) {
-            System.out.println(task.getSimpleDescription());
-        }
-    }
-
-    public ArrayList<Integer> getEpicsSubtasksList(EpicTask epicTask) {
-        return epicTask.getSubTasks();
-    }
-
-    public ArrayList<Integer> getEpicsSubtasksList(int id) {
-        if (!isEpicContainsID(id)) {
-            System.out.println("Эпик с указанным id не был найден");
-            return new ArrayList<>();
-        }
-        EpicTask epicTask = epicTasks.get(id);
-        return epicTask.getSubTasks();
-    }
-
     public boolean isTaskContainsID(int id) {
         return tasks.containsKey(id);
     }
@@ -230,12 +225,4 @@ public class InMemoryTaskManager<T extends Task> implements TaskManager<T> {
         return epicTasks;
     }
 
-    public int getSubTasksSize() {
-        return subTasks.size();
-    }
-
-    // Проверяет есть ли эпики
-    public boolean isEpicTaskAvailable() {
-        return !epicTasks.isEmpty();
-    }
 }

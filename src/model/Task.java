@@ -28,6 +28,15 @@ public class Task {
         InMemoryTaskManager.incrementIDCounter();
     }
 
+    // Конструктор для создания таски при загрузке из файла
+    public Task(int id, String taskName, String taskDescription, TaskType type, TaskStatus status) {
+        this.id = id;
+        this.name = taskName;
+        this.description = taskDescription;
+        this.type = type;
+        this.status = status;
+    }
+
     public String getName() {
         return name;
     }
@@ -52,31 +61,10 @@ public class Task {
         this.status = taskStatus;
     }
 
-    public String getSimpleDescription() {
-        String result = "";
-
-        if (this.type.equals(TaskType.TASK)) {
-            result += TaskType.TASK.toString();
-
-        } else if (this.type.equals(TaskType.EPIC)) {
-            result += TaskType.EPIC.toString();
-        } else {
-            result += TaskType.SUBTASK.toString();
-        }
-
-        result += " " + this.name;
-
-        if (this.status.equals(TaskStatus.NEW)) {
-            result += " " + TaskStatus.NEW.toString() + " ";
-        } else if (this.status.equals(TaskStatus.IN_PROGRESS)) {
-            result += " " + TaskStatus.IN_PROGRESS.toString() + " ";
-        } else {
-            result += " " + TaskStatus.DONE.toString() + " ";
-        }
-
-        result += "ID " + this.id;
-
-        return result;
+    public String getStringValueOfTask() {
+        //id,type,name,status,description
+        return String.format("%d,%s,%s,%s,%s",
+                                this.id, this.type.toString(), this.name, this.status.toString(), this.description);
     }
 
     @Override

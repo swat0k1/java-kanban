@@ -3,22 +3,22 @@ package tests;
 import interfaces.TaskManager;
 import manager.Managers;
 import model.EpicTask;
-import model.SubTask;
 import model.Task;
 import model.TaskType;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 
-public class InMemoryHistoryManager {
+public class InMemoryHistoryManagerTest {
 
-    public static Managers managers;
-    public static TaskManager taskManager;
+    private Managers managers;
+    private TaskManager taskManager;
 
-    @BeforeAll
-    public static void BeforeAll() {
+    @BeforeEach
+    public void BeforeEach() {
         managers = new Managers();
         taskManager = managers.getDefault();
 
@@ -61,14 +61,20 @@ public class InMemoryHistoryManager {
     @Test
     public void AddingAndRemovalTest() {
         ArrayList<Task> taskHistoryList = taskManager.getHistory();
+
+        int historySize1 = taskHistoryList.size();
         Task task1 = taskHistoryList.get(0);
-        EpicTask epicTask = new EpicTask("Epic task 1", "Description", TaskType.EPIC);
-        Assertions.assertEquals(true, taskHistoryList.contains(task1));
-        Assertions.assertEquals(false,taskHistoryList.contains(epicTask));
-        taskManager.createTask(epicTask);
-        taskManager.getTask(epicTask.getId());
-        Assertions.assertEquals(false, taskHistoryList.contains(task1));
-        Assertions.assertEquals(true,taskHistoryList.contains(epicTask));
+        taskManager.getTask(task1.getId());
+        taskHistoryList = taskManager.getHistory();
+        int historySize2 = taskHistoryList.size();
+
+        Assertions.assertEquals(true, historySize1 == historySize2);
+
+        taskManager.removeTask(task1.getId());
+        taskHistoryList = taskManager.getHistory();
+        int historySize3 = taskHistoryList.size();
+        Assertions.assertEquals(true, historySize1 == historySize3 + 1);
+
     }
 
 }

@@ -15,7 +15,17 @@ public class SubTask extends Task {
             System.out.println("Сабтаску нельзя сделать своим же эпиком!");
             this.epicTaskID = -1;
         }
+    }
 
+    // Конструктор для создания таски при загрузке из файла
+    public SubTask(int id, String taskName, String taskDescription, TaskType taskType, TaskStatus status, int epicTask) {
+        super(id, taskName, taskDescription, taskType, status);
+        if (epicTask != this.getId()) {
+            this.epicTaskID = epicTask;
+        } else {
+            System.out.println("Сабтаску нельзя сделать своим же эпиком!");
+            this.epicTaskID = -1;
+        }
     }
 
     public EpicTask getEpicTask(TaskManager inMemoryTaskManager) {
@@ -29,9 +39,11 @@ public class SubTask extends Task {
         return epicTaskID;
     }
 
-    public void changeTaskStatus(TaskStatus taskStatus, TaskManager inMemoryTaskManager) {
-            super.changeTaskStatus(taskStatus);
-            getEpicTask(inMemoryTaskManager).updateEpicTaskStatus(inMemoryTaskManager);
+    @Override
+    public String getStringValueOfTask() {
+        //id,type,name,status,description,epicID
+        return String.format("%d,%s,%s,%s,%s,%d",
+                getId(), getType().toString(), getName(), getStatus().toString(), getDescription(), getEpicTaskID());
     }
 
     @Override
