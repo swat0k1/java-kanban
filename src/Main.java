@@ -13,12 +13,12 @@ public class Main {
         Task simpleTask1 = new Task("Simple task 1", "");
         Task simpleTask2 = new Task("Simple task 2", "");
 
-        Task epicTask1 = new EpicTask("Epic task 1", "", TaskType.EPIC);
-        Task subTask1 = new SubTask("Subtask 1","", TaskType.SUBTASK, epicTask1.getId());
-        Task subTask2 = new SubTask("Subtask 2","", TaskType.SUBTASK, epicTask1.getId());
-        Task subTask3 = new SubTask("Subtask 3","", TaskType.SUBTASK, epicTask1.getId());
+        Task epicTask1 = new EpicTask("Epic task 1", "");
+        Task subTask1 = new SubTask("Subtask 1","", epicTask1.getId());
+        Task subTask2 = new SubTask("Subtask 2","", epicTask1.getId());
+        Task subTask3 = new SubTask("Subtask 3","", epicTask1.getId());
 
-        Task epicTask2 = new EpicTask("Epic task 2", "", TaskType.EPIC);
+        Task epicTask2 = new EpicTask("Epic task 2", "");
 
         inMemoryTaskManager.createTask(simpleTask1);
         inMemoryTaskManager.createTask(simpleTask2);

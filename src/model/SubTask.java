@@ -1,35 +1,36 @@
 package model;
 
-import interfaces.TaskManager;
+import manager.InMemoryTaskManager;
+
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class SubTask extends Task {
 
-    private final int epicTaskID;
+    private int epicTaskID;
 
-    public SubTask(String taskName, String taskDescription, TaskType taskType, int epicTask) {
-        super(taskName, taskDescription, taskType);
-        if (epicTask != this.getId()) {
-            this.epicTaskID = epicTask;
-        } else {
-            System.out.println("Сабтаску нельзя сделать своим же эпиком!");
-            this.epicTaskID = -1;
-        }
+    // Конструктор для создания сабтаски с указанием эпика без времени исполнения
+    public SubTask(String taskName, String taskDescription, int epicTask) {
+        super(taskName, taskDescription, TaskType.SUBTASK);
+        checkEpicTaskID(epicTask);
     }
 
-    // Конструктор для создания таски при загрузке из файла
-    public SubTask(int id, String taskName, String taskDescription, TaskType taskType, TaskStatus status, int epicTask) {
-        super(id, taskName, taskDescription, taskType, status);
-        if (epicTask != this.getId()) {
-            this.epicTaskID = epicTask;
-        } else {
-            System.out.println("Сабтаску нельзя сделать своим же эпиком!");
-            this.epicTaskID = -1;
-        }
+    // Конструктор для создания сабтаски с эпиком и с временем исполнения
+    public SubTask(String taskName, String taskDescription, int epicTask, int duration, LocalDateTime startTime) {
+        super(taskName, taskDescription, TaskType.SUBTASK, duration, startTime);
+        checkEpicTaskID(epicTask);
     }
 
-    public EpicTask getEpicTask(TaskManager inMemoryTaskManager) {
-        if (inMemoryTaskManager.isEpicContainsID(epicTaskID)) {
+    // Конструктор для создания сабтаски при загрузке из файла c временем исполнения
+    public SubTask(InMemoryTaskManager inMemoryTaskManager, int id, String taskName, String taskDescription, TaskStatus status, int epicTask,
+                   Duration duration, LocalDateTime startTime, LocalDateTime endTime) {
+        super(inMemoryTaskManager, id, taskName, taskDescription, TaskType.SUBTASK, status, duration, startTime, endTime);
+        checkEpicTaskID(epicTask);
+    }
+
+    public EpicTask getEpicTask() {
+        if (this.inMemoryTaskManager.isEpicContainsID(epicTaskID)) {
             return (EpicTask) inMemoryTaskManager.getEpicTaskHashMap().get(epicTaskID);
         }
         return null;
@@ -39,11 +40,28 @@ public class SubTask extends Task {
         return epicTaskID;
     }
 
+    private void checkEpicTaskID(int epicTaskID) {
+        if (epicTaskID != this.getId()) {
+            this.epicTaskID = epicTaskID;
+        } else {
+            System.out.println("Сабтаску нельзя сделать своим же эпиком!");
+            this.epicTaskID = -1;
+        }
+    }
+
+    @Override
+    public void changeTaskStatus(TaskStatus taskStatus) {
+        super.changeTaskStatus(taskStatus);
+        getEpicTask().updateEpicTaskStatus(this.inMemoryTaskManager);
+    }
+
     @Override
     public String getStringValueOfTask() {
-        //id,type,name,status,description,epicID
-        return String.format("%d,%s,%s,%s,%s,%d",
-                getId(), getType().toString(), getName(), getStatus().toString(), getDescription(), getEpicTaskID());
+        //id,type,name,status,description,duration,startTime,endTime,epicID
+        return String.format("%d,%s,%s,%s,%s,%s,%s,%s,%d",
+                getId(), getType().toString(), getName(), getStatus().toString(), getDescription(),
+                this.getDuration().toString(), this.getStartTime().toString(), this.calculateEndTime().toString(),
+                getEpicTaskID());
     }
 
     @Override

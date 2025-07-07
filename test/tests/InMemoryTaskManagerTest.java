@@ -1,33 +1,32 @@
 package tests;
 
-import interfaces.TaskManager;
-import manager.Managers;
+import manager.InMemoryTaskManager;
 import model.EpicTask;
 import model.SubTask;
 import model.Task;
 import model.TaskType;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-public class InMemoryTaskManagerTest {
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 
-    public Managers managers;
-    public TaskManager taskManager;
+public class InMemoryTaskManagerTest extends TaskManagerTest {
+
+    public InMemoryTaskManager taskManager;
     public Task task;
     public SubTask subTask;
     public EpicTask epicTask;
 
     @BeforeEach
     public void BeforeEach() {
-        managers = new Managers();
-        taskManager = managers.getDefault();
+        taskManager = new InMemoryTaskManager();
         task = new Task("Test task", "Test task description");
         taskManager.createTask(task);
-        epicTask = new EpicTask("Test epicTask", "Test epicTask description", TaskType.EPIC);
+        epicTask = new EpicTask("Test epicTask", "Test epicTask description");
         taskManager.createTask(epicTask);
-        subTask = new SubTask("Test subTask", "Test subTask description",TaskType.SUBTASK, epicTask.getId());
+        subTask = new SubTask("Test subTask", "Test subTask description", epicTask.getId());
         taskManager.createTask(subTask);
     }
 
@@ -74,6 +73,30 @@ public class InMemoryTaskManagerTest {
         taskManager.removeTask(subTask.getId());
         Assertions.assertEquals(false, epicTask.getSubTasks().contains(subTask.getId()));
         taskManager.createTask(subTask);
+    }
+
+    @Test
+    public void sortedTasksListCheck() {
+        Task task1 = new Task("Test task", "Test task description", TaskType.TASK, 1,
+                LocalDateTime.of(2025, 7, 6, 22, 0));
+        taskManager.createTask(task1);
+        EpicTask epicTask1 = new EpicTask("Test epicTask", "Test epicTask description");
+        taskManager.createTask(epicTask1);
+        SubTask subTask1 = new SubTask("Test subTask", "Test subTask description",
+                epicTask.getId(), 2, LocalDateTime.of(2025, 7, 6, 22, 4));
+        taskManager.createTask(subTask1);
+        SubTask subTask2 = new SubTask("Test subTask", "Test subTask description",
+                epicTask.getId(), 2, LocalDateTime.of(2025, 7, 6, 22, 2));
+        taskManager.createTask(subTask2);
+        ArrayList<Task> list = taskManager.getPrioritizedTasks();
+        ArrayList<Task> listCorrect = new ArrayList<>();
+        listCorrect.add(task1);
+        listCorrect.add(subTask2);
+        listCorrect.add(subTask1);
+        Assertions.assertEquals(list.size(), listCorrect.size());
+        Assertions.assertEquals(list.get(0), listCorrect.get(0));
+        Assertions.assertEquals(list.get(1), listCorrect.get(1));
+        Assertions.assertEquals(list.get(2), listCorrect.get(2));
     }
 
 }

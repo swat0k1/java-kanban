@@ -30,4 +30,7 @@ public interface TaskManager<T extends Task> {
 
     public HashMap<Integer, EpicTask> getEpicTaskHashMap();
 
+    public ArrayList<Task> getPrioritizedTasks();
+
+    public boolean tasksOverlapAnotherTask(Task task1, Task task2);
 }
