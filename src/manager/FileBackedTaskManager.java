@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 public class FileBackedTaskManager extends InMemoryTaskManager {
 
     private final File file;
-    private final String header = "id,type,name,status,description,duration,startTime,endTime,(-/epicID/subTasksIDs...)"; 
+    private final String header = "id,type,name,status,description,duration,startTime,endTime,(-/epicID/subTasksIDs...)";
     private final int headerIdIndex = 0;
     private final int headerTypeIndex = 1;
     private final int headerNameIndex = 2;
