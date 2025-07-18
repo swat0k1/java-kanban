@@ -1,23 +1,29 @@
 package model;
 
 import interfaces.TaskManager;
+import manager.InMemoryTaskManager;
+
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class EpicTask extends Task {
 
-    private ArrayList<Integer> subTasksID;
+    private ArrayList<Integer> subTasksID = new ArrayList<>();
 
-    public EpicTask(String taskName, String taskDescription, TaskType taskType) {
-        super(taskName, taskDescription, taskType);
-        this.subTasksID = new ArrayList<>();
+    // Конструктор для создания эпика без времени исполнения
+    public EpicTask(String taskName, String taskDescription) {
+        super(taskName, taskDescription, TaskType.EPIC);
+        calculateTime();
     }
 
-    // Конструктор для создания таски при загрузке из файла
-    public EpicTask(int id, String taskName, String taskDescription, TaskType taskType, TaskStatus status) {
-        super(id, taskName, taskDescription, taskType, status);
-        this.subTasksID = new ArrayList<>();
+    // Конструктор для создания эпика при загрузке из файла c временем исполнения
+    public EpicTask(InMemoryTaskManager inMemoryTaskManager, int id, String taskName, String taskDescription, TaskStatus status,
+                    Duration duration, LocalDateTime startTime, LocalDateTime endTime) {
+        super(inMemoryTaskManager, id, taskName, taskDescription, TaskType.EPIC, status, duration, startTime, endTime);
     }
 
     public void addSubTask(Integer subtask) {
@@ -28,11 +34,55 @@ public class EpicTask extends Task {
 
         if (!subTasksID.contains(subtask)) {
             subTasksID.add(subtask);
+            calculateTime();
         }
     }
 
     public void removeSubTask(Integer subtask) {
         subTasksID.remove(subtask);
+        calculateTime();
+    }
+
+    public void calculateTime() {
+
+        if (subTasksID.isEmpty()) {
+           this.setDuration(Duration.ZERO);
+           this.setStartTime(LocalDateTime.MIN);
+           this.setEndTime(LocalDateTime.MIN);
+           return;
+        }
+
+        ArrayList<SubTask> subTasks = getTasksWithTime();
+
+        LocalDateTime minStartTime = LocalDateTime.MAX;
+        LocalDateTime maxEndTime = LocalDateTime.MIN;
+        Duration duration = Duration.ZERO;
+
+        for (SubTask subTask : subTasks) {
+            if (subTask.getStartTime().isBefore(minStartTime)) {
+                minStartTime = subTask.getStartTime();
+            }
+            if (subTask.calculateEndTime().isAfter(maxEndTime)) {
+                maxEndTime = subTask.calculateEndTime();
+            }
+            duration = duration.plus(subTask.getDuration());
+        }
+
+        this.setDuration(duration);
+        this.setStartTime(minStartTime);
+        this.setEndTime(maxEndTime);
+
+    }
+
+    private ArrayList<SubTask> getTasksWithTime() {
+
+        return subTasksID
+                .stream()
+                .map(inMemoryTaskManager::getSubTaskWithoutRecord)
+                .filter(Objects::nonNull)
+                .filter(subTask -> !subTask.durationAndStartTimeNotSet())
+                .collect(Collectors.toCollection(ArrayList::new));
+
     }
 
     public ArrayList<Integer> getSubTasks() {
@@ -77,9 +127,11 @@ public class EpicTask extends Task {
         for (Integer subTaskID : subTasks) {
             subTasksString.append(",").append(subTaskID);
         }
-        //id,type,name,status,description,subTasksIDs...
-        return String.format("%d,%s,%s,%s,%s%s",
-                getId(), getType().toString(), getName(), getStatus().toString(), getDescription(), subTasksString);
+        //id,type,name,status,description,duration,startTime,endTime,subTasksIDs...
+        return String.format("%d,%s,%s,%s,%s,%s,%s,%s%s",
+                getId(), getType().toString(), getName(), getStatus().toString(), getDescription(),
+                this.getDuration().toString(), this.getStartTime().toString(), this.getEndTime().toString(),
+                subTasksString);
     }
 
     @Override
