@@ -1,6 +1,5 @@
 package tests;
 
-import exceptions.ManagerLoadException;
 import exceptions.ManagerSaveException;
 import manager.FileBackedTaskManager;
 import manager.InMemoryTaskManager;
@@ -184,24 +183,12 @@ public class FileBackedTaskManagerTest {
     }
 
     @Test
-    void LoadFromFileTest() {
-
-        File file = new File("file.csv");
-
-        Exception exception = assertThrows(ManagerLoadException.class, () -> {
-            FileBackedTaskManager.loadFromFile(file);
-        }, "Ошибка при загрузке файла");
-
-    }
-
-    @Test
     void testSave_FileWriteError() {
-        // Создаем файл в защищенной директории или с запрещенными правами (это пример, возможно, потребуется адаптация под вашу файловую систему)
-        File protectedFile = new File("/file.csv"); // Замените на путь к защищенной директории
+
+        File protectedFile = new File("/file.csv");
 
         FileBackedTaskManager manager = new FileBackedTaskManager(protectedFile);
 
-        // Проверяем, что метод выбрасывает исключение
         Exception exception = assertThrows(ManagerSaveException.class, () -> {
             manager.save();
         }, "Ошибка сохранения файла");

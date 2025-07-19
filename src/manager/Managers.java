@@ -19,4 +19,8 @@ public class Managers {
         return new FileBackedTaskManager(file);
     }
 
+    public FileBackedTaskManager getBackedFromFile(File file) {
+        return FileBackedTaskManager.loadFromFile(file);
+    }
+
 }

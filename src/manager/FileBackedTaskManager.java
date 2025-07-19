@@ -31,6 +31,18 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         FileBackedTaskManager manager = new FileBackedTaskManager(file);
         int maxTaskID = -1;
 
+        try {
+            if (!file.exists()) {
+                if (file.createNewFile()) {
+                    System.out.println("Файл был успешно создан: " + file.getAbsolutePath());
+                } else {
+                    System.out.println("Не удалось создать файл.");
+                }
+            }
+        } catch (IOException e) {
+            System.err.println("Ошибка при работе с файлом: " + e.getMessage());
+        }
+
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             String line = reader.readLine();
 
@@ -124,9 +136,10 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     @Override
-    public void createTask(Task task) {
-        super.createTask(task);
+    public int createTask(Task task) {
+        int result = super.createTask(task);
         save();
+        return result;
     }
 
     public void createTaskWithoutSaving(Task task) {
@@ -134,9 +147,10 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     @Override
-    public void updateTask(Task task, int id) {
-        super.updateTask(task, id);
+    public int updateTask(Task task, int id) {
+        int result = super.updateTask(task, id);
         save();
+        return result;
     }
 
     @Override

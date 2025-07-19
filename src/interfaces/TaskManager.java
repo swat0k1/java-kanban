@@ -8,9 +8,9 @@ import java.util.HashMap;
 
 public interface TaskManager<T extends Task> {
 
-    public void createTask(T task);
+    public int createTask(T task);
 
-    public void updateTask(T task, int id);
+    public int updateTask(T task, int id);
 
     public T getTask(int id);
 
