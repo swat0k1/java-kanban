@@ -44,10 +44,10 @@ public class HistoryHandler extends BaseHandler implements HttpHandler {
             tasksID.add(task.getId());
         }
 
-        Gson gson = new GsonBuilder().
-                registerTypeAdapter(ArrayList.class, new IntegerArrayTypeAdapter()).
-                setPrettyPrinting().
-                create();
+        Gson gson = new GsonBuilder()
+                .registerTypeAdapter(ArrayList.class, new IntegerArrayTypeAdapter())
+                .setPrettyPrinting()
+                .create();
 
         String serializedTasks = gson.toJson(tasksID);
         sendText(exchange, serializedTasks, 200);

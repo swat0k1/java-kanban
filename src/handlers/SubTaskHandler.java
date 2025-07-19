@@ -46,10 +46,10 @@ public class SubTaskHandler extends BaseHandler implements HttpHandler {
 
         ArrayList<SubTask> subTasks = getTaskManager().getTaskList(TaskType.SUBTASK);
 
-        Gson gson = new GsonBuilder().
-                registerTypeAdapter(SubTask.class, new SubTaskTypeAdapter(getTaskManager())).
-                setPrettyPrinting().
-                create();
+        Gson gson = new GsonBuilder()
+                .registerTypeAdapter(SubTask.class, new SubTaskTypeAdapter(getTaskManager()))
+                .setPrettyPrinting()
+                .create();
 
         String serializedTasks = gson.toJson(subTasks);
         sendText(exchange, serializedTasks, 200);
@@ -68,10 +68,10 @@ public class SubTaskHandler extends BaseHandler implements HttpHandler {
         }
 
         if (subTask != null) {
-            Gson gson = new GsonBuilder().
-                    registerTypeAdapter(SubTask.class, new SubTaskTypeAdapter(getTaskManager())).
-                    setPrettyPrinting().
-                    create();
+            Gson gson = new GsonBuilder()
+                    .registerTypeAdapter(SubTask.class, new SubTaskTypeAdapter(getTaskManager()))
+                    .setPrettyPrinting()
+                    .create();
 
             String serializedTasks = gson.toJson(subTask);
             sendText(exchange, serializedTasks, 200);
@@ -86,9 +86,9 @@ public class SubTaskHandler extends BaseHandler implements HttpHandler {
         InputStream inputStream = exchange.getRequestBody();
         String body = new String(inputStream.readAllBytes(), DEFAULT_CHARSET);
         boolean bodyContainsID = body.contains(ID_FORMAT_1) || body.contains(ID_FORMAT_2);
-        Gson gson = new GsonBuilder().
-                registerTypeAdapter(SubTask.class, new SubTaskTypeAdapter(getTaskManager())).
-                create();
+        Gson gson = new GsonBuilder()
+                .registerTypeAdapter(SubTask.class, new SubTaskTypeAdapter(getTaskManager()))
+                .create();
         SubTask subTask = gson.fromJson(body, SubTask.class);
 
         if (bodyContainsID) {

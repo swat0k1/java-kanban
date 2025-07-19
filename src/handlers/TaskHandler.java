@@ -44,10 +44,10 @@ public class TaskHandler extends BaseHandler implements HttpHandler {
     private void handleGetTasks(HttpExchange exchange) throws IOException {
         ArrayList<Task> tasks = getTaskManager().getTaskList(TaskType.TASK);
 
-        Gson gson = new GsonBuilder().
-                registerTypeAdapter(Task.class, new TaskTypeAdapter(getTaskManager())).
-                setPrettyPrinting().
-                create();
+        Gson gson = new GsonBuilder()
+                .registerTypeAdapter(Task.class, new TaskTypeAdapter(getTaskManager()))
+                .setPrettyPrinting()
+                .create();
 
         String serializedTasks = gson.toJson(tasks);
         sendText(exchange, serializedTasks, 200);
@@ -64,10 +64,10 @@ public class TaskHandler extends BaseHandler implements HttpHandler {
         }
 
         if (task != null) {
-            Gson gson = new GsonBuilder().
-                    registerTypeAdapter(Task.class, new TaskTypeAdapter(getTaskManager())).
-                    setPrettyPrinting().
-                    create();
+            Gson gson = new GsonBuilder()
+                    .registerTypeAdapter(Task.class, new TaskTypeAdapter(getTaskManager()))
+                    .setPrettyPrinting()
+                    .create();
 
             String serializedTasks = gson.toJson(task);
             sendText(exchange, serializedTasks, 200);
@@ -80,9 +80,9 @@ public class TaskHandler extends BaseHandler implements HttpHandler {
         InputStream inputStream = exchange.getRequestBody();
         String body = new String(inputStream.readAllBytes(), DEFAULT_CHARSET);
         boolean bodyContainsID = body.contains(ID_FORMAT_1) || body.contains(ID_FORMAT_2);
-        Gson gson = new GsonBuilder().
-                registerTypeAdapter(Task.class, new TaskTypeAdapter(getTaskManager())).
-                create();
+        Gson gson = new GsonBuilder()
+                .registerTypeAdapter(Task.class, new TaskTypeAdapter(getTaskManager()))
+                .create();
         Task task = gson.fromJson(body, Task.class);
 
         if (bodyContainsID) {

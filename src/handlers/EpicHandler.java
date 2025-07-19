@@ -48,10 +48,10 @@ public class EpicHandler extends BaseHandler implements HttpHandler {
 
         ArrayList<EpicTask> epicTasks = getTaskManager().getTaskList(TaskType.EPIC);
 
-        Gson gson = new GsonBuilder().
-                registerTypeAdapter(EpicTask.class, new EpicTypeAdapter(getTaskManager())).
-                setPrettyPrinting().
-                create();
+        Gson gson = new GsonBuilder()
+                .registerTypeAdapter(EpicTask.class, new EpicTypeAdapter(getTaskManager()))
+                .setPrettyPrinting()
+                .create();
 
         String serializedTasks = gson.toJson(epicTasks);
         sendText(exchange, serializedTasks, 200);
@@ -70,10 +70,10 @@ public class EpicHandler extends BaseHandler implements HttpHandler {
         }
 
         if (epicTask != null) {
-            Gson gson = new GsonBuilder().
-                    registerTypeAdapter(EpicTask.class, new EpicTypeAdapter(getTaskManager())).
-                    setPrettyPrinting().
-                    create();
+            Gson gson = new GsonBuilder()
+                    .registerTypeAdapter(EpicTask.class, new EpicTypeAdapter(getTaskManager()))
+                    .setPrettyPrinting()
+                    .create();
 
             String serializedTasks = gson.toJson(epicTask);
             sendText(exchange, serializedTasks, 200);
@@ -91,10 +91,10 @@ public class EpicHandler extends BaseHandler implements HttpHandler {
         EpicTask epicTask = (EpicTask) getTaskManager().getTask(taskID);
 
         if (epicTask != null) {
-            Gson gson = new GsonBuilder().
-                    registerTypeAdapter(ArrayList.class, new IntegerArrayTypeAdapter()).
-                    setPrettyPrinting().
-                    create();
+            Gson gson = new GsonBuilder()
+                    .registerTypeAdapter(ArrayList.class, new IntegerArrayTypeAdapter())
+                    .setPrettyPrinting()
+                    .create();
 
             String serializedTasks = gson.toJson(epicTask.getSubTasks());
             sendText(exchange, serializedTasks, 200);
@@ -107,9 +107,9 @@ public class EpicHandler extends BaseHandler implements HttpHandler {
 
         InputStream inputStream = exchange.getRequestBody();
         String body = new String(inputStream.readAllBytes(), DEFAULT_CHARSET);
-        Gson gson = new GsonBuilder().
-                registerTypeAdapter(EpicTask.class, new EpicTypeAdapter(getTaskManager())).
-                create();
+        Gson gson = new GsonBuilder()
+                .registerTypeAdapter(EpicTask.class, new EpicTypeAdapter(getTaskManager()))
+                .create();
         EpicTask epicTask = gson.fromJson(body, EpicTask.class);
 
         int result = getTaskManager().createTask(epicTask);

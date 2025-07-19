@@ -30,13 +30,13 @@ public class PriorityTest {
 
     InMemoryTaskManager manager;
     HttpServer httpServer;
-    Gson gson = new GsonBuilder().
-            registerTypeAdapter(Task.class, new TaskTypeAdapter(manager)).
-            registerTypeAdapter(SubTask.class, new SubTaskTypeAdapter(manager)).
-            registerTypeAdapter(EpicTask.class, new EpicTypeAdapter(manager)).
-            registerTypeAdapter(ArrayList.class, new IntegerArrayTypeAdapter()).
-            setPrettyPrinting().
-            create();
+    Gson gson = new GsonBuilder()
+            .registerTypeAdapter(Task.class, new TaskTypeAdapter(manager))
+            .registerTypeAdapter(SubTask.class, new SubTaskTypeAdapter(manager))
+            .registerTypeAdapter(EpicTask.class, new EpicTypeAdapter(manager))
+            .registerTypeAdapter(ArrayList.class, new IntegerArrayTypeAdapter())
+            .setPrettyPrinting()
+            .create();
 
     @BeforeEach
     public void setUp() throws IOException {
