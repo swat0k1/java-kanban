@@ -26,6 +26,13 @@ public class EpicTask extends Task {
         super(inMemoryTaskManager, id, taskName, taskDescription, TaskType.EPIC, status, duration, startTime, endTime);
     }
 
+    public EpicTask(InMemoryTaskManager inMemoryTaskManager, int id, String taskName, String taskDescription,
+                    TaskStatus taskStatus, ArrayList<Integer> subTasksID) {
+        super(inMemoryTaskManager, id, taskName, taskDescription, TaskType.EPIC, taskStatus);
+        this.subTasksID = subTasksID;
+        calculateTime();
+    }
+
     public void addSubTask(Integer subtask) {
         if (subtask.equals(this.getId())) {
             System.out.println("Эпик нельзя добавить в самого себя в виде задачи!");
