@@ -62,7 +62,7 @@ abstract class BaseHandler {
         String exchangePath = exchange.getRequestURI().getPath();
         String exchangeMethod = exchange.getRequestMethod();
         String[] pathParts = exchangePath.split("/");
-        int pathLength= pathParts.length;
+        int pathLength = pathParts.length;
 
         if (pathLength == 2 && pathParts[1].equals("tasks")) {
             if (exchangeMethod.equals("GET")) {
