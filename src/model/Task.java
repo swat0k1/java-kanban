@@ -58,6 +58,7 @@ public class Task implements Comparable<Task> {
         this.type = type;
         this.status = status;
         this.inMemoryTaskManager = inMemoryTaskManager;
+        InMemoryTaskManager.incrementIDCounter();
     }
 
     // Конструктор для создания таски при загрузке из файла с временем исполнения
@@ -72,6 +73,16 @@ public class Task implements Comparable<Task> {
         this.startTime = startTime;
         this.endTime = endTime;
         this.inMemoryTaskManager = inMemoryTaskManager;
+        InMemoryTaskManager.incrementIDCounter();
+    }
+
+    public Task(InMemoryTaskManager inMemoryTaskManager, int id, String taskName, String taskDescription, TaskType type) {
+        this.id = id;
+        this.name = taskName;
+        this.description = taskDescription;
+        this.type = type;
+        this.inMemoryTaskManager = inMemoryTaskManager;
+        InMemoryTaskManager.incrementIDCounter();
     }
 
     public LocalDateTime getStartTime() {
@@ -102,8 +113,6 @@ public class Task implements Comparable<Task> {
     public void setInMemoryTaskManager(InMemoryTaskManager inMemoryTaskManager) {
         if (this.inMemoryTaskManager == null) {
             this.inMemoryTaskManager = inMemoryTaskManager;
-        } else {
-            System.out.println("Таск менеджер для задачи уже установлен!");
         }
     }
 

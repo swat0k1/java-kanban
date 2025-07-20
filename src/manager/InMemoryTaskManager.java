@@ -29,17 +29,18 @@ public class InMemoryTaskManager<T extends Task> implements TaskManager<T> {
     }
 
     @Override
-    public void createTask(T task) {
+    public int createTask(T task) {
 
         if (taskOverlapAnyOtherTask(task)) {
             System.out.println("Задача не может быть добавлена в менеджер задач: пересечение времени!");
-            return;
+            return -2;
         }
 
         if (task.getType().equals(TaskType.EPIC)) {
             epicTasks.put(task.getId(), (EpicTask) task);
             task.setInMemoryTaskManager(this);
             System.out.println("Создан эпик. id: " + task.getId());
+            return 1;
 
         } else if (task.getType().equals(TaskType.SUBTASK)) {
             SubTask subTask = (SubTask) task;
@@ -48,9 +49,16 @@ public class InMemoryTaskManager<T extends Task> implements TaskManager<T> {
             if (!subTask.getStartTime().equals(LocalDateTime.MIN)) {
                 sortedTasks.add(subTask);
             }
-            EpicTask epicTask = (EpicTask) getTaskWithoutRecord(subTask.getEpicTask().getId());
-            epicTask.addSubTask(task.getId());
-            System.out.println("Создана сабтаска. id: " + task.getId());
+            try {
+                EpicTask epicTask = (EpicTask) getTaskWithoutRecord(subTask.getEpicTask().getId());
+                epicTask.addSubTask(task.getId());
+                System.out.println("Создана сабтаска. id: " + task.getId());
+            } catch (NullPointerException exception) {
+                System.out.println("Эпик отсутствует");
+                return -1;
+            }
+
+            return 1;
 
         } else if (task.getType().equals(TaskType.TASK)) {
             tasks.put(task.getId(), task);
@@ -59,43 +67,48 @@ public class InMemoryTaskManager<T extends Task> implements TaskManager<T> {
                 sortedTasks.add(task);
             }
             System.out.println("Создана таска. id: " + task.getId());
+            return 1;
 
         } else {
             System.out.println("Ошибка при создании таски!");
+            return -1;
         }
 
     }
 
     @Override
-    public void updateTask(T task, int id) {
+    public int updateTask(T task, int id) {
 
         if (taskOverlapAnyOtherTask(task)) {
             System.out.println("Задача не может быть обновлена в менеджере задач: пересечение времени!");
-            return;
+            return -2;
         }
 
         if (task.getType().equals(TaskType.EPIC)) {
             if (!isEpicContainsID(id)) {
                 System.out.println("Эпик с указанным id не был найден");
-                return;
+                return -3;
             }
             epicTasks.put(id, (EpicTask) task);
+            return 1;
         } else if (task.getType().equals(TaskType.SUBTASK)) {
             if (!isSubTaskContainsID(id)) {
                 System.out.println("Сабтаска с указанным id не была найдена");
-                return;
+                return -3;
             }
             subTasks.put(id, (SubTask) task);
+            return 1;
         } else if (task.getType().equals(TaskType.TASK)) {
             if (!isTaskContainsID(id)) {
                 System.out.println("Таска с указанным id не была найдена");
-                return;
+                return -3;
             }
             tasks.put(id, task);
+            return 1;
         } else {
             System.out.println("Ошибка при обновлении таски!");
+            return -1;
         }
-
     }
 
     @Override
@@ -144,7 +157,6 @@ public class InMemoryTaskManager<T extends Task> implements TaskManager<T> {
             return subTasks.get(id);
         }
 
-        System.out.println("Ошибка! Сабтаска с указанным id не найдена!");
         return null;
 
     }
@@ -180,8 +192,8 @@ public class InMemoryTaskManager<T extends Task> implements TaskManager<T> {
             return false;
         }
 
-        if (task1.equals(task2)) {
-            return true;
+        if (task1.getId() == task2.getId()) {
+            return false;
         }
 
         LocalDateTime startTime1 = task1.getStartTime();
@@ -215,7 +227,9 @@ public class InMemoryTaskManager<T extends Task> implements TaskManager<T> {
 
         if (isTaskContainsID(id)) {
             T task = (T) tasks.get(id);
-            inMemoryHistoryManager.remove(task.getId());
+            if (inMemoryHistoryManager.getNodeMap().containsKey(task.getId())) {
+                inMemoryHistoryManager.remove(task.getId());
+            }
             tasks.remove(id);
             if (sortedTasks.contains(task)) {
                 sortedTasks.remove(task);
@@ -227,7 +241,9 @@ public class InMemoryTaskManager<T extends Task> implements TaskManager<T> {
             for (Integer subTaskID : subTaskArrayList) {
                 if (isSubTaskContainsID(subTaskID)) {
                     T task = (T) subTasks.get(subTaskID);
-                    inMemoryHistoryManager.remove(task.getId());
+                    if (inMemoryHistoryManager.getNodeMap().containsKey(task.getId())) {
+                        inMemoryHistoryManager.remove(task.getId());
+                    }
                     subTasks.remove(subTaskID);
                     if (sortedTasks.contains(task)) {
                         sortedTasks.remove(task);
@@ -236,7 +252,9 @@ public class InMemoryTaskManager<T extends Task> implements TaskManager<T> {
             }
             epicTask.clearSubTasksList();
             T task = (T) epicTasks.get(id);
-            inMemoryHistoryManager.remove(task.getId());
+            if (inMemoryHistoryManager.getNodeMap().containsKey(task.getId())) {
+                inMemoryHistoryManager.remove(task.getId());
+            }
             epicTasks.remove(epicTask.getId());
             if (sortedTasks.contains(task)) {
                 sortedTasks.remove(task);
@@ -248,17 +266,16 @@ public class InMemoryTaskManager<T extends Task> implements TaskManager<T> {
 
             epicTask.removeSubTask(subTask.getId());
             T task = (T) subTasks.get(id);
-            inMemoryHistoryManager.remove(task.getId());
+            if (inMemoryHistoryManager.getNodeMap().containsKey(task.getId())) {
+                inMemoryHistoryManager.remove(task.getId());
+            }
             subTasks.remove(subTask.getId());
             if (sortedTasks.contains(task)) {
                 sortedTasks.remove(task);
             }
             epicTask.updateEpicTaskStatus(this);
 
-        } else {
-            System.out.println();
         }
-
     }
 
     @Override

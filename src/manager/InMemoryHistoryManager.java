@@ -18,6 +18,10 @@ public class InMemoryHistoryManager implements HistoryManager {
         return nodeList.getTasks();
     }
 
+    public HashMap<Integer, Node> getNodeMap() {
+        return nodeMap;
+    }
+
     @Override
     public void add(Task task) {
         Integer taskId = task.getId();
